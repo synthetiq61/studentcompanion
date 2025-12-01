@@ -12,7 +12,7 @@
       --muted:#6b7380; --radius:14px; --ease:cubic-bezier(.2,.9,.3,1);
     }
     html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial;
-      background:linear-gradient(180deg,var(--bg),#eaf2ff); display:flex;align-items:center;justify-content:center;}
+      background:linear-gradient(180deg,var(--bg),#eaf2ff); display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:20px;}
     .card{width:min(880px,96vw); background:var(--card); border-radius:var(--radius); padding:28px; box-shadow:0 12px 40px rgba(10,16,30,0.08); backdrop-filter: blur(6px);}
     h1{margin:0 0 6px 0;font-size:20px}
     p{color:var(--muted);margin:0 0 18px}
@@ -210,6 +210,11 @@
     <div class="loading-text">
       Loading<span class="dot-animation">.</span><span class="dot-animation">.</span><span class="dot-animation">.</span>
     </div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:20px;padding:12px 0;">
+    <h2 style="margin:0;font-size:24px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">RCCIIT Student Companion</h2>
+    <p style="margin:4px 0 0 0;color:var(--muted);font-size:12px;letter-spacing:0.5px;">by SynthetIQ</p>
   </div>
 
   <header>
