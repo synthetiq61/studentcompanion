@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RCCIIT Student Companion Student Portal</title>
+  <style>
+    /* Keep the same design system but focused on the student dashboard */
+    :root{ --bg:#f6fbff; --accent:#0a84ff; --accent2:#5e60ff; --card:rgba(255,255,255,0.93); --muted:#5f6872; --radius:12px; --ease:cubic-bezier(.2,.9,.3,1)}
+    html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial;background:linear-gradient(180deg,var(--bg),#eef6ff); color:#0b1220}
+    header{padding:18px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:1100px;margin:18px auto;border-radius:14px;background:linear-gradient(90deg,rgba(10,132,255,0.08),rgba(94,96,255,0.03));}
+    .container{max-width:980px;margin:18px auto;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(11,18,32,0.06)}
+    .btn{padding:10px 14px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;text-decoration:none;font-weight:700}
+    .btn.ghost{background:transparent;border:1px solid rgba(10,16,30,0.06);color:var(--muted)}
+    .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+    .menu-card{padding:14px;border-radius:12px;background:#fff;box-shadow:0 8px 22px rgba(11,18,32,0.04);cursor:pointer;transition:transform 260ms var(--ease)}
+    .menu-card:hover{transform:translateY(-8px)}
+    label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+    .info{color:var(--muted);font-size:14px}
+    #pdfViewer,#holidayViewer{height:480px;border-radius:10px;background:linear-gradient(180deg,#fbfdff,#f6fafc);display:flex;align-items:center;justify-content:center;color:var(--muted);overflow:hidden}
+    @media(max-width:780px){ header{flex-direction:column;align-items:start} }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <strong>RCCIIT Student Portal</strong>
+      <div style="font-size:13px;color:var(--muted)">Personalized for your department</div>
+    </div>
+    <div>
+      <a class="btn ghost" href="index.html">Change Access</a>
+      <a class="btn" href="#" id="logoutBtn">Logout</a>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+    <!-- The page reads department, section, sem, and (optionally) password from query params.
+         We display a simple welcome banner and the same menu options (notices, calendar, contacts...) -->
+    <section id="welcomeCard">
+      <h2 id="welcomeTitle">Welcome Student</h2>
+      <div class="info" id="studentInfo">Loading…</div>
+    </section>
+
+    <section style="margin-top:14px">
+      <div class="menu-grid" id="menuGrid" role="list">
+        <div class="menu-card" onclick="openSection('notice')">Notices<div class="info">Latest campus updates</div></div>
+        <div class="menu-card" onclick="openSection('calendar')">Academic Calendar<div class="info">Exam & semester activities</div></div>
+        <div class="menu-card" onclick="openSection('class')">Class Info<div class="info">Announcements</div></div>
+        <div class="menu-card" onclick="openSection('holiday')">Holiday Calendar<div class="info">Department holidays</div></div>
+        <div class="menu-card" onclick="openSection('timetable')">Timetable<div class="info">Daily schedule</div></div>
+        <div class="menu-card" onclick="openSection('contacts')">Contacts<div class="info">Important numbers</div></div>
+        <div class="menu-card" onclick="openSection('events')">Events<div class="info">Upcoming activities</div></div>
+      </div>
+    </section>
+
+    <!-- Sections (hidden & shown dynamically) -->
+    <section id="notice" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Notices</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div style="margin-top:8px" id="noticesList"><em>No notices yet.</em></div>
+    </section>
+
+    <section id="calendar" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Academic Calendar</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div id="pdfViewer" style="margin-top:12px">No PDF available for your department.</div>
+    </section>
+
+    <section id="holiday" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Holiday Calendar</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div id="holidayViewer" style="margin-top:12px">No holiday PDF available.</div>
+    </section>
+
+    <section id="contacts" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Contacts</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div style="margin-top:12px">
+        <h4>Principal (Landline)</h4><p class="info">+91 03323231534</p>
+        <h4>Anti-Ragging Committee</h4><p class="info">+91 8334844489 (Mr. Sandip Saha)</p>
+      </div>
+    </section>
+
+    <section id="class" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Class Info</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div style="margin-top:12px" id="classInfo">All classes are to be conducted normally according to timetable until further notice.</div>
+    </section>
+
+    <section id="timetable" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Timetable</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div style="margin-top:12px" id="tt">Timetable will appear here.</div>
+    </section>
+
+    <section id="events" style="display:none;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Events</h3>
+        <a class="btn ghost" onclick="backToMain()">Back</a>
+      </div>
+      <div id="eventsList" style="margin-top:12px">No events added yet.</div>
+    </section>
+
+  </main>
+
+  <script>
+    // Inline comments explain the logic for each step.
+    // 1) Parse query params to obtain dept/section/sem/pass sent from index.html
+    function parseQuery() {
+      const q = new URLSearchParams(location.search);
+      return {
+        dept: q.get('dept') || '',
+        section: q.get('section') || '',
+        sem: q.get('sem') || '',
+        pass: q.get('pass') || ''
+      };
+    }
+
+    // 2) Basic client-side password check (still local-only)
+    //    In production, this must be a server-side auth check.
+    function checkDeptPassword(dept, pass) {
+      // Stored password key convention: 'dept_password_<DEPT>'
+      const stored = localStorage.getItem('dept_password_' + dept);
+      if (!stored) return true; // no password required
+      return stored === pass;
+    }
+
+    // 3) On load: fill UI and validate.
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = parseQuery();
+      const welcomeTitle = document.getElementById('welcomeTitle');
+      const info = document.getElementById('studentInfo');
+
+      welcomeTitle.innerText = `Welcome — ${params.dept} (Section ${params.section})`;
+      info.innerText = `Semester ${params.sem} · Department: ${params.dept} · Section: ${params.section}`;
+
+      // Validate department password — if fails, show alert and return to chooser.
+      const ok = checkDeptPassword(params.dept, params.pass);
+      if (!ok) {
+        alert('Incorrect department password. Redirecting to access chooser.');
+        location.href = 'index.html';
+        return;
+      }
+
+      // Expose logout behaviour: simply go back to index (for now).
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        location.href = 'index.html';
+      });
+
+      // Pre-load department PDF if available in localStorage
+      const base64 = localStorage.getItem('calendar_pdf_' + params.dept);
+      if (base64) {
+        document.getElementById('pdfViewer').innerHTML = `<iframe src="${base64}" style="width:100%;height:100%;border:0"></iframe>`;
+      }
+
+      const holiday = localStorage.getItem('holiday_pdf_' + params.dept);
+      if (holiday) {
+        document.getElementById('holidayViewer').innerHTML = `<iframe src="${holiday}" style="width:100%;height:100%;border:0"></iframe>`;
+      }
+    });
+
+    // keyboard accessibility: ESC returns to chooser
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') location.href = 'index.html'; });
+  </script>
+  <!-- Added script: robust show/hide navigation + convert password checkboxes to eye buttons -->
+<script>
+(function(){
+  // Centralized pages list (keeps in sync with canvas layout)
+  const ALL_PAGES = [
+    'mainPage','studentLogin','studentDashboard','noticePage','acadCalPage','classPage','holidayPage','timetablePage','contactsPage','eventsPage','adminLogin','adminDashboard'
+  ];
+
+  function showOnly(ids){
+    const show = Array.isArray(ids) ? ids : [ids];
+    ALL_PAGES.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(show.includes(id)) { el.classList.remove('hidden'); el.setAttribute('aria-hidden','false'); }
+      else { el.classList.add('hidden'); el.setAttribute('aria-hidden','true'); }
+    });
+    const target = document.getElementById(show[0]);
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  }
+
+  // Expose to global scope so existing onclick handlers continue to work
+  window.showOnly = showOnly;
+  window.showStudentLogin = function(){ showOnly('studentLogin'); setTimeout(()=>document.getElementById('studentDept')?.focus(),150); };
+  window.showAdminLogin = function(){ showOnly('adminLogin'); setTimeout(()=>document.getElementById('adminUser')?.focus(),150); };
+  window.goBack = function(){ showOnly('mainPage'); };
+  window.backToDashboard = function(){ showOnly('studentDashboard'); };
+  window.logoutStudent = function(){ showOnly('mainPage'); };
+  window.logoutAdmin = function(){ showOnly('mainPage'); };
+
+  // Replace old checkbox-based 'show password' with eye buttons
+  function svgEye(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7z" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+  function svgEyeOff(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-5 0-9.27-3.11-11-7 1.14-2.56 2.9-4.66 5.12-6.04" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1l22 22" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+
+  window.togglePasswordEye = function(inputId, btn){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    const isPwd = input.type === 'password';
+    input.type = isPwd ? 'text' : 'password';
+    btn.innerHTML = isPwd ? svgEyeOff() : svgEye();
+    input.focus();
+  };
+
+  // On DOM ready: find checkbox controls used previously and replace them with eye buttons
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // Find checkboxes whose id starts with 'show' (pattern used earlier)
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      try{
+        // Many of the checkboxes had onclick like: togglePassword('studentPassword','showStudentPass')
+        const onclick = cb.getAttribute('onclick') || '';
+        const match = onclick.match(/togglePassword\(['"]?([a-zA-Z0-9_-]+)['"]?\s*,\s*['"]?([a-zA-Z0-9_-]+)['"]?\)/);
+        if(!match) return;
+        const targetInputId = match[1];
+
+        // Create eye button
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'eye-btn';
+        btn.setAttribute('aria-label','Toggle password visibility');
+        btn.innerHTML = svgEye();
+        btn.addEventListener('click', ()=> window.togglePasswordEye(targetInputId, btn));
+
+        // Replace the checkbox's parent label content with the eye button
+        const parent = cb.closest('label');
+        if(parent){
+          // remove the checkbox (and any text) then append the eye button
+          parent.parentNode.replaceChild(btn, parent);
+        } else {
+          // fallback: replace checkbox directly
+          cb.parentNode.replaceChild(btn, cb);
+        }
+      }catch(e){/* non-fatal */}
+    });
+
+    // Also ensure any standalone .eye-wrap buttons (those already in HTML) use the new handler and reflect state
+    document.querySelectorAll('.eye-wrap button.eye-btn').forEach(btn=>{
+      const onclick = btn.getAttribute('onclick') || '';
+      // if onclick already points to togglePasswordEye, keep it. Otherwise try to infer target by looking for nearby input
+      if(!onclick.includes('togglePasswordEye')){
+        // find input in same container
+        const container = btn.closest('.password-field');
+        if(container){
+          const input = container.querySelector('input');
+          if(input){
+            btn.addEventListener('click', ()=> window.togglePasswordEye(input.id, btn));
+          }
+        }
+      }
+    });
+  });
+
+  // For safety: if any old functions are still referenced elsewhere, ensure they exist and delegate to new implementations
+  window.openSection = function(id){
+    // Hide all sections first
+    ['notice', 'calendar', 'holiday', 'contacts', 'class', 'timetable', 'events'].forEach(sectionId => {
+      const el = document.getElementById(sectionId);
+      if (el) el.style.display = 'none';
+    });
+    
+    // Show the requested section
+    const section = document.getElementById(id);
+    if (section) {
+      section.style.display = 'block';
+      section.scrollIntoView({behavior:'smooth'});
+    }
+    
+    // Load PDF viewers when requested (maintain previous behaviour)
+    if (id === 'calendar') {
+      const params = parseQuery();
+      const dept = params.dept;
+      const base64PDF = localStorage.getItem('calendar_pdf_' + dept);
+      const viewer = document.getElementById('pdfViewer');
+      if(viewer) viewer.innerHTML = base64PDF ? `<iframe src="${base64PDF}" style="width:100%;height:100%;border:0"></iframe>` : 'No PDF uploaded for your department.';
+    }
+    if (id === 'holiday') {
+      const params = parseQuery();
+      const dept = params.dept;
+      const base64PDF = localStorage.getItem('holiday_pdf_' + dept);
+      const viewer = document.getElementById('holidayViewer');
+      if(viewer) viewer.innerHTML = base64PDF ? `<iframe src="${base64PDF}" style="width:100%;height:100%;border:0"></iframe>` : 'No Holiday PDF uploaded.';
+    }
+  };
+
+  window.backToMain = function() {
+    // Hide all sections
+    ['notice', 'calendar', 'holiday', 'contacts', 'class', 'timetable', 'events'].forEach(sectionId => {
+      const el = document.getElementById(sectionId);
+      if (el) el.style.display = 'none';
+    });
+    // Show main (welcome + menu)
+    document.getElementById('main').scrollIntoView({behavior:'smooth'});
+  };
+
+  // Ensure admin login button still hooks up if DOM was already loaded earlier
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const adminBtn = document.getElementById('adminLoginBtn');
+    if(adminBtn && !adminBtn._patched){
+      adminBtn._patched = true;
+      adminBtn.addEventListener('click', function(e){ e.preventDefault(); const username = document.getElementById('adminUser').value; const password = document.getElementById('adminPass').value; if(username === defaultAdmin.username && password === defaultAdmin.password){ showOnly('adminDashboard'); } else { alert('Incorrect admin credentials.'); } });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

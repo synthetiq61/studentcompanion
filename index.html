@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Welcome to RCCIIT Student Companion</title>
+  <style>
+    /* Tiny, focused UI for selecting access. iOS-inspired look + motion-aware. */
+    :root{
+      --bg:#f2f5f9; --accent:#0a84ff; --accent2:#5e60ff; --card:rgba(255,255,255,0.9);
+      --muted:#6b7380; --radius:14px; --ease:cubic-bezier(.2,.9,.3,1);
+    }
+    html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial;
+      background:linear-gradient(180deg,var(--bg),#eaf2ff); display:flex;align-items:center;justify-content:center;}
+    .card{width:min(880px,96vw); background:var(--card); border-radius:var(--radius); padding:28px; box-shadow:0 12px 40px rgba(10,16,30,0.08); backdrop-filter: blur(6px);}
+    h1{margin:0 0 6px 0;font-size:20px}
+    p{color:var(--muted);margin:0 0 18px}
+    .split{display:flex; gap:14px}
+    .box{flex:1;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,rgba(255,255,255,0.95)); box-shadow:0 6px 18px rgba(10,16,30,0.04); transition: transform 260ms var(--ease)}
+    .box:hover{transform:translateY(-6px)}
+    .btn{display:inline-block;padding:10px 14px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;text-decoration:none;font-weight:700;box-shadow:0 10px 30px rgba(10,132,255,0.12)}
+    .btn.ghost{background:transparent;color:var(--muted);border:1px solid rgba(10,16,30,0.06)}
+    label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+    select,input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(10,16,30,0.06);outline:none}
+    .hint{margin-top:12px;color:var(--muted);font-size:13px}
+    @media(max-width:740px){ .split{flex-direction:column} }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <h1 id="title">RCCIIT Student Companion</h1>
+    <p>Choose your access type- </p>
+
+    <div class="split" aria-hidden="false">
+      <!-- STUDENT BOX: submits to student.html with query parameters -->
+      <section class="box" aria-labelledby="studentTitle">
+        <h3 id="studentTitle">Student</h3>
+        <p style="margin:6px 0 12px;color:var(--muted)">~Enter department, section, semester and department password (if required).</p>
+
+        <form id="studentForm" onsubmit="goStudent(event)">
+          <label for="dept">Department</label>
+          <select id="dept" name="dept" required>
+            <option value="AIML">CSE (AI & ML)</option>
+            <option value="CS">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EE">EE</option>
+            <option value="IT">IT</option>
+          </select>
+
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <div style="flex:1">
+              <label for="section">Section</label>
+              <select id="section" name="section">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label for="sem">Semester</label>
+              <select id="sem" name="sem">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <label for="deptPass">Department Password (if required)</label>
+            <input id="deptPass" name="deptPass" placeholder="Leave empty if none" />
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:14px; align-items:center">
+            <button class="btn" type="submit">Continue as Student</button>
+            
+          </div>
+
+        </form>
+      </section>
+
+      <!-- ADMIN BOX: goes to admin.html -->
+      <section class="box" aria-labelledby="adminTitle">
+        <h3 id="adminTitle">Admin</h3>
+        <p style="margin:6px 0 12px;color:var(--muted)">~Proceed to Admin portal.</p>
+        <br>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex; gap:10px;">
+            <a class="btn" href="admin.html">Open Admin Page</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // When student form is submitted, we navigate to student.html with query params.
+    // Using query params keeps pages separate and allows student.html to pick up values on load.
+    function goStudent(e) {
+      e.preventDefault();
+      const dept = encodeURIComponent(document.getElementById('dept').value);
+      const section = encodeURIComponent(document.getElementById('section').value);
+      const sem = encodeURIComponent(document.getElementById('sem').value);
+      const deptPass = encodeURIComponent(document.getElementById('deptPass').value || '');
+      // Build URL and navigate
+      const url = `student.html?dept=${dept}&section=${section}&sem=${sem}&pass=${deptPass}`;
+      // smooth micro-interaction
+      location.href = url;
+    }
+
+    function resetStudent() {
+      document.getElementById('studentForm').reset();
+    }
+  </script>
+  <!-- Added script: robust show/hide navigation + convert password checkboxes to eye buttons -->
+<script>
+(function(){
+  // Centralized pages list (keeps in sync with canvas layout)
+  const ALL_PAGES = [
+    'mainPage','studentLogin','studentDashboard','noticePage','acadCalPage','classPage','holidayPage','timetablePage','contactsPage','eventsPage','adminLogin','adminDashboard'
+  ];
+
+  function showOnly(ids){
+    const show = Array.isArray(ids) ? ids : [ids];
+    ALL_PAGES.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(show.includes(id)) { el.classList.remove('hidden'); el.setAttribute('aria-hidden','false'); }
+      else { el.classList.add('hidden'); el.setAttribute('aria-hidden','true'); }
+    });
+    const target = document.getElementById(show[0]);
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  }
+
+  // Expose to global scope so existing onclick handlers continue to work
+  window.showOnly = showOnly;
+  window.showStudentLogin = function(){ showOnly('studentLogin'); setTimeout(()=>document.getElementById('studentDept')?.focus(),150); };
+  window.showAdminLogin = function(){ showOnly('adminLogin'); setTimeout(()=>document.getElementById('adminUser')?.focus(),150); };
+  window.goBack = function(){ showOnly('mainPage'); };
+  window.backToDashboard = function(){ showOnly('studentDashboard'); };
+  window.logoutStudent = function(){ showOnly('mainPage'); };
+  window.logoutAdmin = function(){ showOnly('mainPage'); };
+
+  // Replace old checkbox-based 'show password' with eye buttons
+  function svgEye(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7z" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+  function svgEyeOff(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-5 0-9.27-3.11-11-7 1.14-2.56 2.9-4.66 5.12-6.04" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1l22 22" stroke="#334155" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+
+  window.togglePasswordEye = function(inputId, btn){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    const isPwd = input.type === 'password';
+    input.type = isPwd ? 'text' : 'password';
+    btn.innerHTML = isPwd ? svgEyeOff() : svgEye();
+    input.focus();
+  };
+
+  // On DOM ready: find checkbox controls used previously and replace them with eye buttons
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // Find checkboxes whose id starts with 'show' (pattern used earlier)
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      try{
+        // Many of the checkboxes had onclick like: togglePassword('studentPassword','showStudentPass')
+        const onclick = cb.getAttribute('onclick') || '';
+        const match = onclick.match(/togglePassword\(['"]?([a-zA-Z0-9_-]+)['"]?\s*,\s*['"]?([a-zA-Z0-9_-]+)['"]?\)/);
+        if(!match) return;
+        const targetInputId = match[1];
+
+        // Create eye button
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'eye-btn';
+        btn.setAttribute('aria-label','Toggle password visibility');
+        btn.innerHTML = svgEye();
+        btn.addEventListener('click', ()=> window.togglePasswordEye(targetInputId, btn));
+
+        // Replace the checkbox's parent label content with the eye button
+        const parent = cb.closest('label');
+        if(parent){
+          // remove the checkbox (and any text) then append the eye button
+          parent.parentNode.replaceChild(btn, parent);
+        } else {
+          // fallback: replace checkbox directly
+          cb.parentNode.replaceChild(btn, cb);
+        }
+      }catch(e){/* non-fatal */}
+    });
+
+    // Also ensure any standalone .eye-wrap buttons (those already in HTML) use the new handler and reflect state
+    document.querySelectorAll('.eye-wrap button.eye-btn').forEach(btn=>{
+      const onclick = btn.getAttribute('onclick') || '';
+      // if onclick already points to togglePasswordEye, keep it. Otherwise try to infer target by looking for nearby input
+      if(!onclick.includes('togglePasswordEye')){
+        // find input in same container
+        const container = btn.closest('.password-field');
+        if(container){
+          const input = container.querySelector('input');
+          if(input){
+            btn.addEventListener('click', ()=> window.togglePasswordEye(input.id, btn));
+          }
+        }
+      }
+    });
+  });
+
+  // For safety: if any old functions are still referenced elsewhere, ensure they exist and delegate to new implementations
+  window.openSection = function(id){
+    // if opening a student subpage, show that page; if opening a dashboard, show dashboard
+    if(ALL_PAGES.includes(id)) { showOnly(id); }
+    // load PDF viewers when requested (maintain previous behaviour)
+    if (id === 'acadCalPage') {
+      const dept = document.getElementById('studentDept')?.value || document.getElementById('calendarDept')?.value;
+      const base64PDF = localStorage.getItem('calendar_pdf_' + dept);
+      const viewer = document.getElementById('pdfViewer');
+      if(viewer) viewer.innerHTML = base64PDF ? `<iframe src="${base64PDF}" style="width:100%; height:100%; border:none"></iframe>` : 'No PDF uploaded for your department.';
+    }
+    if (id === 'holidayPage') {
+      const dept = document.getElementById('studentDept')?.value || document.getElementById('holidayDept')?.value;
+      const base64PDF = localStorage.getItem('holiday_pdf_' + dept);
+      const viewer = document.getElementById('holidayViewer');
+      if(viewer) viewer.innerHTML = base64PDF ? `<iframe src="${base64PDF}" style="width:100%; height:100%; border:none"></iframe>` : 'No Holiday PDF uploaded.';
+    }
+  };
+
+  // Ensure admin login button still hooks up if DOM was already loaded earlier
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const adminBtn = document.getElementById('adminLoginBtn');
+    if(adminBtn && !adminBtn._patched){
+      adminBtn._patched = true;
+      adminBtn.addEventListener('click', function(e){ e.preventDefault(); const username = document.getElementById('adminUser').value; const password = document.getElementById('adminPass').value; if(username === defaultAdmin.username && password === defaultAdmin.password){ showOnly('adminDashboard'); } else { alert('Incorrect admin credentials.'); } });
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  // Which selector wraps your page content? Change if needed.
+  // Use the highest-level element you have (typically <body> or a top .container)
+  const PAGE_SELECTOR = document.querySelector('body') || document.documentElement;
+
+  // Add enter animation on load.
+  function playEnter() {
+    // remove any lingering exit class
+    PAGE_SELECTOR.classList.remove('page-exit', 'page-exit-fast');
+    // restart enter animation
+    PAGE_SELECTOR.classList.remove('page-enter');
+    // force reflow to restart animation reliably
+    void PAGE_SELECTOR.offsetWidth;
+    PAGE_SELECTOR.classList.add('page-enter');
+  }
+
+  // Play exit animation then call callback when done
+  function playExit({ fast = false, onDone } = {}) {
+    // ensure enter class removed
+    PAGE_SELECTOR.classList.remove('page-enter');
+    // apply exit class
+    if (fast) {
+      PAGE_SELECTOR.classList.add('page-exit-fast');
+      PAGE_SELECTOR.classList.remove('page-exit');
+    } else {
+      PAGE_SELECTOR.classList.add('page-exit');
+      PAGE_SELECTOR.classList.remove('page-exit-fast');
+    }
+    // listen once for animation end to proceed
+    const duration = window.getComputedStyle(PAGE_SELECTOR).animationDuration || '420ms';
+    // compute ms from duration string (use fallback)
+    let ms = 420;
+    try {
+      const d = getComputedStyle(PAGE_SELECTOR).animationDuration.split(',')[0].trim();
+      ms = d.endsWith('ms') ? parseFloat(d) : parseFloat(d) * 1000;
+    } catch (e) { ms = fast ? 260 : 420; }
+    setTimeout(() => {
+      if (typeof onDone === 'function') onDone();
+    }, ms + 40); // small buffer
+  }
+
+  // navigateTo helper: call from buttons that would otherwise do location.href immediately.
+  // Example: <button onclick="navigateTo('student.html')">Student</button>
+  window.navigateTo = function (url, opts = {}) {
+    // if external link (different origin) -> go directly
+    try {
+      const parsed = new URL(url, location.href);
+      if (parsed.origin !== location.origin) {
+        location.href = url;
+        return;
+      }
+    } catch (e) {
+      // invalid url? still attempt to navigate
+    }
+
+    // Play exit animation then navigate
+    playExit({ fast: !!opts.fast, onDone() { location.href = url; } });
+  };
+
+  // Intercept local anchor clicks that have data-transition attribute -> animate then navigate
+  function bindLinks() {
+    // delegate click on entire document for anchors
+    document.addEventListener('click', function (ev) {
+      const a = ev.target.closest && ev.target.closest('a');
+      if (!a) return;
+      // only internal links (same origin) and non-hash navigation
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('#')) return;
+      // data-transition attribute opt-in
+      if (a.hasAttribute('data-transition')) {
+        // prevent default and animate
+        ev.preventDefault();
+        const url = a.href;
+        playExit({ onDone() { location.href = url; } });
+      }
+    }, { capture: true });
+  }
+
+  // If page was loaded via back/forward, play enter animation (nice for SPA-ish feel)
+  window.addEventListener('pageshow', function (e) {
+    // pageshow with persisted true indicates bfcache restore — still play enter
+    playEnter();
+  });
+
+  // Kick things off: play enter on DOM ready and bind link interception
+  document.addEventListener('DOMContentLoaded', function () {
+    playEnter();
+    bindLinks();
+  });
+
+  // Optional: expose helpers if you need to explicitly trigger enter/exit
+  window._pageTransition = { playEnter, playExit };
+})();
+</script>
+
+</body>
+</html>
