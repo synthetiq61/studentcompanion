@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Welcome to RCCIIT Student Companion</title>
   <style>
-    /* Tiny, focused UI for selecting access. iOS-inspired look + motion-aware. */
+    
     :root{
       --bg:#f2f5f9; --accent:#0a84ff; --accent2:#5e60ff; --card:rgba(255,255,255,0.9);
       --muted:#6b7380; --radius:14px; --ease:cubic-bezier(.2,.9,.3,1);
@@ -27,7 +27,7 @@
     @media(max-width:740px){ .split{flex-direction:column} }
      header .sub{ color:var(--muted); font-size:13px }
 
-    /* Loading screen animations */
+    
     #loadingScreen {
       position: fixed;
       top: 0;
@@ -283,7 +283,7 @@
   </main>
 
   <script>
-    // When student form is submitted, we navigate to student.html with query params.
+    // When student form is submitted, navigate to student.html with query params.
     // Using query params keeps pages separate and allows student.html to pick up values on load.
     function goStudent(e) {
       e.preventDefault();
@@ -391,7 +391,7 @@
     });
   });
 
-  // For safety: if any old functions are still referenced elsewhere, ensure they exist and delegate to new implementations
+ 
   window.openSection = function(id){
     // if opening a student subpage, show that page; if opening a dashboard, show dashboard
     if(ALL_PAGES.includes(id)) { showOnly(id); }
@@ -532,3 +532,4 @@
 
 </body>
 </html>
+
