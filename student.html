@@ -129,7 +129,7 @@
     }
 
     // 2) Basic client-side password check (still local-only)
-    //    In production, this must be a server-side auth check.
+    //    Recommendrd this be a serverside auth check.
     function checkDeptPassword(dept, pass) {
       // Stored password key convention: 'dept_password_<DEPT>'
       const stored = localStorage.getItem('dept_password_' + dept);
@@ -319,3 +319,4 @@
 
 </body>
 </html>
+
